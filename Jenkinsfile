@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         IMAGE = "sunnymca107/react"
-        TAG = "${env.BUILD_NUMBER ?: 'latest'}"
+    
     }
 
     stages {
@@ -31,7 +31,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t ${IMAGE}:${TAG} ."
+                sh "docker build -t {IMAGE}:{TAG} ."
             }
         }
 
@@ -39,20 +39,8 @@ pipeline {
             when {
                 expression { return env.DOCKER_REGISTRY_URL }
             }
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'docker-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin ${env.DOCKER_REGISTRY_URL}"
-                    sh "docker tag ${IMAGE}:${TAG} ${env.DOCKER_REGISTRY_URL}/${IMAGE}:${TAG}"
-                    sh "docker push ${env.DOCKER_REGISTRY_URL}/${IMAGE}:${TAG}"
-                }
+        
             }
-        }
-    }
-
-    post {
-        always {
-            archiveArtifacts artifacts: 'react-app/dist/**', allowEmptyArchive: true
-            cleanWs()
         }
     }
 }
