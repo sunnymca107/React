@@ -6,7 +6,7 @@ pipeline {
     stages {
         stage('clone') {
             steps {
-		git branch: 'main', url: 'https://github.com/Aakash0706/2nd-ia-devops.git'
+		git branch: 'main', url: 'https://github.com/sunnymca107/React.git'
             }
         }
         stage('Build') {
@@ -17,8 +17,8 @@ pipeline {
         }
         stage('Docker Build & tag') {
             steps {
-                sh 'docker build -t 2nd-ia .'
-                sh 'docker tag 2nd-ia sunnymca107-ia'
+                sh 'docker build -t sunnymca107/react .'
+                sh 'docker tag sunnymca107/react'
             }
         }
         
@@ -31,7 +31,7 @@ pipeline {
                     )]) {
                         sh '''
                         echo $PASS | docker login -u $USER --password-stdin
-                        docker push sunnymca107-ia:latest
+                        docker push sunnymca107/react:latest
                         '''
                     }
             }
@@ -39,9 +39,9 @@ pipeline {
         
         stage('pull and run') {
             steps {
-                sh 'docker pull jaiswalakash/2nd-ia'
-		 sh 'docker rm -f 2nd-ia || true'
-                sh 'docker run -d -p 9092:80 jaiswalakash/2nd-ia'
+                sh 'docker pull sunnymca107/react'
+		 sh 'docker rm sunnymca107/react || true'
+                sh 'docker run -d -p 9092:80 sunnymca107/react'
             }
         }
     }
